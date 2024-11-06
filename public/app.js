@@ -137,15 +137,12 @@ function playSound(phonemeFile, duration) {
 }
 
 
-
 socket.on('updateSoundDuration', (data) => {
   console.log("data received:", data);
   ticked(data);
-
+  
   τ = dataArray[0] * Math.PI,
     maxLength = dataArray[10] * 10.1;
-
-  circleSize = Math.random() * dataArray[10] * 0.1;
 
   force.resume();
 
@@ -156,6 +153,9 @@ socket.on('updateSoundDuration', (data) => {
   if (slider) {
     //console.log(`${slider.value}`);
     slider.value = data.duration;
+    circleSize = Math.random() * (slider.value);
+    console.log(circleSize);
+
 
     //console.log(`${slider.value}`);
     updateSoundDuration(data.duration);
@@ -163,7 +163,19 @@ socket.on('updateSoundDuration', (data) => {
     console.warn(`Slider for phoneme ID ${data.id} not found.`);
   }
 
-
+  let mouseData = {
+    x: root.px,
+    y: root.py,
+    r: myRed,
+    g: myGreen,
+    b: myBlue,
+    a: myAlpha,
+    d: circleSize || 5,
+    ra: range,
+    ch: charge,
+    v: dataArray[0]
+  }
+  socket.emit('updateSoundDuration', mouseData);
 
 });
 
@@ -171,7 +183,7 @@ socket.on('updateSoundDuration', (data) => {
 phonemeList.forEach(createSlider);
 
 function updateSoundDuration(duration) {
-  console.log(`updated duration for ${data.id}: ${duration}`);
+  //console.log(`updated duration for ${data.id}: ${duration}`);
   // const slider = document.getElementById(data.id);
 
 }
@@ -221,19 +233,6 @@ function moved() {
   //circleSize = Math.random() * 10;
   force.resume();
 
-  let mouseData = {
-    x: root.px,
-    y: root.py,
-    r: myRed,
-    g: myGreen,
-    b: myBlue,
-    a: myAlpha,
-    d: circleSize || 5,
-    ra: range,
-    ch: charge,
-    v: dataArray[0]
-  }
-  socket.emit('sliderChange', mouseData);
 
 }
 
